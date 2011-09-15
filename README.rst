@@ -4,12 +4,12 @@ RobotSoccer-Python
 
 Python library for robotsoccer match simulator communication.
 
-**Installing:**
+**Installing**::
 
     python setup.py install
 
 
-**Using:**
+**Using**::
 
     from robotsoccer import SoccerClient
     sc = SoccerClient()
@@ -20,6 +20,6 @@ Python library for robotsoccer match simulator communication.
         sc.act(force_left_motor, force_right_motor)
 
 
-**More Information:**
+**More Information**:
 
-http://inf.ufrgs.br/~rppereira/robotsoccer.html
+- http://inf.ufrgs.br/~rppereira/robotsoccer.html
