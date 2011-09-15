@@ -1,0 +1,25 @@
+==================
+RobotSoccer-Python
+==================
+
+Python library for robotsoccer match simulator communication.
+
+**Installing:**
+
+    python setup.py install
+
+
+**Using:**
+
+    from robotsoccer import SoccerClient
+    sc = SoccerClient()
+    sc.connect(host, port)
+    while True:
+        force_left_motor = 1
+        force_right_motor = 1
+        sc.act(force_left_motor, force_right_motor)
+
+
+**More Information:**
+
+http://inf.ufrgs.br/~rppereira/robotsoccer.html
