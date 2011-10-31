@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RobotSoccer Python Client &mdash; robotsoccer-python v0.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="robotsoccer-python v0.2 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">robotsoccer-python v0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="robotsoccer-python-client">
+<h1>RobotSoccer Python Client<a class="headerlink" href="#robotsoccer-python-client" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installing">
+<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>python setup.py install</pre>
+</div>
+</div>
+<div class="section" id="using">
+<h2>Using<a class="headerlink" href="#using" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">robotsoccer</span> <span class="kn">import</span> <span class="n">SoccerClient</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">SoccerClient</span><span class="p">()</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">force_left_motor</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">force_right_motor</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">force_left_motor</span><span class="p">,</span> <span class="n">force_right_motor</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tlfn-client">
+<h2>TLFN Client<a class="headerlink" href="#tlfn-client" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">robotsoccer</span> <span class="kn">import</span> <span class="n">TLFNClient</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">TLFNClient</span><span class="p">(</span><span class="s">&#39;weightfile.wts&#39;</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-robotsoccer.client">
+<span id="api"></span><h2>API<a class="headerlink" href="#module-robotsoccer.client" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="robotsoccer.client.Robot">
+<em class="property">class </em><tt class="descclassname">robotsoccer.client.</tt><tt class="descname">Robot</tt><a class="reference internal" href="_modules/robotsoccer/client.html#Robot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.Robot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Robot description.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="robotsoccer.client.SoccerClient">
+<em class="property">class </em><tt class="descclassname">robotsoccer.client.</tt><tt class="descname">SoccerClient</tt><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client interface for a robot soccer match simulator.</p>
+<p>All methods of this class are relative to own robot, i.e, the <tt class="docutils literal"><span class="pre">robot_id</span></tt> 
+robot.</p>
+<p>Notice that <tt class="docutils literal"><span class="pre">world_height</span></tt>, <tt class="docutils literal"><span class="pre">world_width</span></tt>, <tt class="docutils literal"><span class="pre">goal_length</span></tt> actually are 
+the half of real size. This values come directly from robot soccer match.</p>
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.act">
+<tt class="descname">act</tt><big>(</big><em>force_left</em>, <em>force_right</em><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.act"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does action for the robot. Receives the forces of left and right motor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.connect">
+<tt class="descname">connect</tt><big>(</big><em>host='localhost'</em>, <em>port=1024</em><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects to robot soccer match simulator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.disconnect">
+<tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnects from robot soccer match simulator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_ball_angle">
+<tt class="descname">get_ball_angle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_ball_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_ball_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates angle difference between robot and ball, in radians.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_ball_distance">
+<tt class="descname">get_ball_distance</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_ball_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_ball_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates distance in milimeters between robot and ball.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_obstacle_angle">
+<tt class="descname">get_obstacle_angle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_obstacle_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_obstacle_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates angle difference in radians between robot and the nearest 
+obstacle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_obstacle_distance">
+<tt class="descname">get_obstacle_distance</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_obstacle_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_obstacle_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates distance in milimeters between robot and the nearest 
+obstacle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_own_goal">
+<tt class="descname">get_own_goal</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_own_goal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_own_goal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets own attacking goal&#8217;s center.  Notice the goal of robots[1] (right) 
+is goal[0] (left) and vice versa.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_own_robot">
+<tt class="descname">get_own_robot</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_own_robot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_own_robot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the own robot description</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_own_score">
+<tt class="descname">get_own_score</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_own_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_own_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets scores of the own robot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_rival_goal">
+<tt class="descname">get_rival_goal</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_rival_goal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_rival_goal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets attacking goal&#8217;s center of the rival. Notice the goal of robots[1] 
+(right) is goal[0] (left) and vice versa.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_rival_robot">
+<tt class="descname">get_rival_robot</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_rival_robot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_rival_robot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the rival robot description.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_rival_score">
+<tt class="descname">get_rival_score</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_rival_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_rival_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets scores of the rival&#8217;s robot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_spin">
+<tt class="descname">get_spin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_spin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_spin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the angle momentum in radians.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_target_angle">
+<tt class="descname">get_target_angle</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_target_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_target_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates angle difference in radians between robot and correspondent
+goal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.client.SoccerClient.get_target_distance">
+<tt class="descname">get_target_distance</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/client.html#SoccerClient.get_target_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.client.SoccerClient.get_target_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates distance in milimeters between robot and goal.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-robotsoccer.tlfn"></span><dl class="class">
+<dt id="robotsoccer.tlfn.TLFNClient">
+<em class="property">class </em><tt class="descclassname">robotsoccer.tlfn.</tt><tt class="descname">TLFNClient</tt><big>(</big><em>weight_file=None</em><big>)</big><a class="reference internal" href="_modules/robotsoccer/tlfn.html#TLFNClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.tlfn.TLFNClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Robot SoccerClient using TLFN network.</p>
+<dl class="method">
+<dt id="robotsoccer.tlfn.TLFNClient.load_weights">
+<tt class="descname">load_weights</tt><big>(</big><em>weight_file</em><big>)</big><a class="reference internal" href="_modules/robotsoccer/tlfn.html#TLFNClient.load_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.tlfn.TLFNClient.load_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a weight file.</p>
+<p>File format:</p>
+<div class="highlight-python"><pre>&lt;size of input layer&gt; &lt;size of hidden layer&gt; &lt;size of output layer&gt;
+&lt;ball dist&gt; &lt;ball ang&gt; &lt;target ang&gt; &lt;obst dist&gt; &lt;obst ang&gt; &lt;spin&gt; &lt;last leftmotor&gt; &lt;last rightmotor&gt; &lt;actual leftmotor&gt; &lt;actual rightmotor&gt;
+... next train set ...</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.tlfn.TLFNClient.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/tlfn.html#TLFNClient.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.tlfn.TLFNClient.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the TLFN client.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="robotsoccer.tlfn.TLFNClient.step">
+<tt class="descname">step</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/robotsoccer/tlfn.html#TLFNClient.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#robotsoccer.tlfn.TLFNClient.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the next motor forces and apply the <tt class="docutils literal"><span class="pre">act</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">RobotSoccer Python Client</a><ul>
+<li><a class="reference internal" href="#installing">Installing</a></li>
+<li><a class="reference internal" href="#using">Using</a></li>
+<li><a class="reference internal" href="#tlfn-client">TLFN Client</a></li>
+<li><a class="reference internal" href="#module-robotsoccer.client">API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">robotsoccer-python v0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Renato Pereira.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

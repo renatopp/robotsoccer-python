@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>robotsoccer.client &mdash; robotsoccer-python v0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="robotsoccer-python v0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">robotsoccer-python v0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for robotsoccer.client</h1><div class="highlight"><pre>
+<span class="c"># Copyright (C) 2011 Renato de Pontes Pereira, renato.ppontes at gmail dot com</span>
+<span class="c">#</span>
+<span class="c"># This module is part of robotsoccer-python and is released under </span>
+<span class="c"># the MIT  License: http://www.opensource.org/licenses/mit-license.php</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">robotsoccer</span> <span class="kn">import</span> <span class="n">Socket</span>
+<span class="kn">from</span> <span class="nn">robotsoccer</span> <span class="kn">import</span> <span class="n">C</span>
+
+<span class="n">CMD_GET_WORLD</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">CMD_ACT</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">CMD_GET_MATCH_STATUS</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="k">class</span> <span class="nc">Robot</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Robot"><a class="viewcode-back" href="../../index.html#robotsoccer.client.Robot">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Robot description.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_pos</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_angle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstacle</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;Robot </span><span class="si">%s</span><span class="s">&gt;&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">SoccerClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Client interface for a robot soccer match simulator.</span>
+
+<span class="sd">    All methods of this class are relative to own robot, i.e, the ``robot_id`` </span>
+<span class="sd">    robot.</span>
+
+<span class="sd">    Notice that ``world_height``, ``world_width``, ``goal_length`` actually are </span>
+<span class="sd">    the half of real size. This values come directly from robot soccer match.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_height</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_width</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">goals</span> <span class="o">=</span> <span class="p">[</span><span class="n">C</span><span class="p">(),</span> <span class="n">C</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal_deep</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal_length</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_radius</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_count</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robots</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">1024</span><span class="p">):</span>
+<div class="viewcode-block" id="SoccerClient.connect"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.connect">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connects to robot soccer match simulator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">Socket</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_int</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send_int</span><span class="p">(</span><span class="n">CMD_GET_WORLD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_int</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal_deep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">goals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">world_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_width</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">robots</span> <span class="o">=</span> <span class="p">[</span><span class="n">Robot</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_count</span><span class="p">)]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send_int</span><span class="p">(</span><span class="n">CMD_GET_MATCH_STATUS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__update_match</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.disconnect"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.disconnect">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disconnects from robot soccer match simulator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_left</span><span class="p">,</span> <span class="n">force_right</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.act"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.act">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does action for the robot. Receives the forces of left and right motor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send_int</span><span class="p">(</span><span class="n">CMD_ACT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send_float</span><span class="p">(</span><span class="n">force_left</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send_float</span><span class="p">(</span><span class="n">force_right</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__update_match</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">__update_match</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets match status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_int</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">robot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">robots</span><span class="p">:</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">old_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">old_pos</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">old_angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">obstacle</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">obstacle</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">force</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="n">robot</span><span class="o">.</span><span class="n">force</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_float</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_int</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_int</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">recv_int</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_ball_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SoccerClient.get_ball_angle"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_ball_angle">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates angle difference between robot and ball, in radians.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span><span class="p">()</span> <span class="o">-</span> <span class="n">robot</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__adjust_angle</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_target_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_target_angle"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_target_angle">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates angle difference in radians between robot and correspondent</span>
+<span class="sd">        goal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_goal</span><span class="p">()</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">goal</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__adjust_angle</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_obstacle_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_obstacle_angle"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_obstacle_angle">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates angle difference in radians between robot and the nearest </span>
+<span class="sd">        obstacle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">robot</span><span class="o">.</span><span class="n">obstacle</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span><span class="p">()</span> <span class="o">-</span> <span class="n">robot</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__adjust_angle</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_spin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_spin"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_spin">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the angle momentum in radians.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">robot</span><span class="o">.</span><span class="n">angle</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">old_angle</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__adjust_angle</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_ball_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_ball_distance"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_ball_distance">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates distance in milimeters between robot and ball.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ball</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_radius</span>
+
+    <span class="k">def</span> <span class="nf">get_target_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_target_distance"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_target_distance">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates distance in milimeters between robot and goal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_goal</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">goal</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_radius</span>
+
+    <span class="k">def</span> <span class="nf">get_obstacle_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_obstacle_distance"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_obstacle_distance">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates distance in milimeters between robot and the nearest </span>
+<span class="sd">        obstacle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">robot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_own_robot</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">robot</span><span class="o">.</span><span class="n">obstacle</span><span class="o">-</span><span class="n">robot</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_radius</span>
+
+    <span class="k">def</span> <span class="nf">get_own_robot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_own_robot"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_own_robot">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the own robot description</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">robots</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_own_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_own_goal"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_own_goal">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets own attacking goal&#39;s center.  Notice the goal of robots[1] (right) </span>
+<span class="sd">        is goal[0] (left) and vice versa.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">goals</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">get_own_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_own_score"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_own_score">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets scores of the own robot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">get_rival_robot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_rival_robot"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_rival_robot">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the rival robot description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_count</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">robots</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">get_rival_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_rival_goal"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_rival_goal">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets attacking goal&#39;s center of the rival. Notice the goal of robots[1] </span>
+<span class="sd">        (right) is goal[0] (left) and vice versa.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">goals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">get_rival_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="SoccerClient.get_rival_score"><a class="viewcode-back" href="../../index.html#robotsoccer.client.SoccerClient.get_rival_score">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets scores of the rival&#39;s robot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_id</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">__adjust_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span></div>
+        <span class="k">if</span> <span class="n">angle</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+            <span class="n">angle</span> <span class="o">-=</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="k">elif</span> <span class="n">angle</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+            <span class="n">angle</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        
+        <span class="k">return</span> <span class="n">angle</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">robotsoccer-python v0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Renato Pereira.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

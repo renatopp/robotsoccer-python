@@ -14,7 +14,7 @@ long_description = '''
 
 setup(
     name='RobotSoccer',
-    version='0.1',
+    version='0.2',
     url='http://inf.ufrgs.br/~rppereira/robotsoccer.html',
     download_url='https://github.com/renatopp/robotsoccer-python',
     license='MIT License',

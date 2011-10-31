@@ -9,7 +9,7 @@ Python library for robotsoccer match simulator communication.
     python setup.py install
 
 
-**Using**::
+**Basic Usage**::
 
     from robotsoccer import SoccerClient
     sc = SoccerClient()
@@ -18,6 +18,13 @@ Python library for robotsoccer match simulator communication.
         force_left_motor = 1
         force_right_motor = 1
         sc.act(force_left_motor, force_right_motor)
+
+**TLFN Client**::
+
+    from robotsoccer import TLFNClient
+    sc = TLFNClient('weightfile.wts')
+    sc.connect(host, port)
+    sc.run()
 
 
 **More Information**:
